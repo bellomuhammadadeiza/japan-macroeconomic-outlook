@@ -30,7 +30,7 @@ This project implements a multivariate time series analysis of Japan's macroecon
   - Out-of-sample forecasting performance evaluation
   - Comparison with Random Walk benchmark using Root Mean Square Error (RMSE)
 
-## Full Details
-For complete details of the analysis, methodology, results, and conclusions, please see the full report below:
-
-[FRE 530 Final Project Report](FRE_530_Final_Project.pdf)
+## Appendix
+- For complete details of the analysis, methodology, results, and conclusions, please see the full report [here](resources/japan_macroeconomic_outlook_report.pdf)
+- For the GVAR dataset, see [here](resources/CountryData1979Q2-2023Q3.xls)
+- For the R-code used for the project, see [here](resources/japan_varx.Rmd)
