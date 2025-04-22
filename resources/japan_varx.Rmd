@@ -1,0 +1,81 @@
+---
+title: "Multvar Time Series Analysis - japan"
+author: "Muhammad Bello"
+date: "2025-03-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(MTS)
+library(forecast)
+library(vars)
+library(urca)
+library(dplyr)
+```
+
+```{r}
+#Read data
+data<- read_excel("GVAR Database (1979Q2-2023Q3)/Country Data (1979Q2-2023Q3).xls", sheet = "JAPAN")
+```
+
+```{r}
+head(data)
+```
+
+```{r}
+#Check stationarity
+variables<- setdiff(names(data), "date")
+data$date<- as.yearqtr(data$date, format = "%YQ%q")
+
+#Test each variable for trend
+for (var in variables) { 
+  test_type<- "trend"
+  adf_test <- ur.df(data[[var]], type = test_type, selectlags = "AIC")
+  print(paste("ADF Test for", var))
+  print(summary(adf_test))
+}
+```
+
+```{r}
+#Test each variable for drift
+for (var in variables) { 
+  test_type<- "trend"
+  adf_test <- ur.df(data[[var]], type = test_type, selectlags = "AIC")
+  print(paste("ADF Test for", var))
+  print(summary(adf_test))
+}
+```
+
+```{r}
+#Apply First difference on variables that are not stationary
+#First difference for stationarity
+
+#For now, just apply FD for all to see if next code run
+data<- data%>%
+  mutate(across(-date, ~ c(NA, diff(.x, lag = 1, differences = 1))))%>%
+  slice(-1)
+```
+
+```{r}
+#Define endo and exog. Japan is big metal exporter, hence endo.
+#It uses alot of oil but not big enough to influence price - exog
+endo<- as.matrix(data[, c("y", "Dp", "eq", "ep", "r", "lr", "pmetal")])
+
+exog<- as.matrix(data[, c("ys", "Dps", "eqs", "rs", "lrs", "poil")])
+```
+
+```{r}
+VARselect(endo, type = "both", exogen = exog)
+```
+
+```{r}
+#VAR
+varx_model<- VAR(endo, p = 1, exogen = exog, type = "both", season = 4)
+
+summary(varx_model)
+```
